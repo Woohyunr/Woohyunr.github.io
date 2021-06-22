@@ -13,27 +13,27 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="前边分析了CC1和CC2利用链，总体来说都是通过InvokerTransformer#transforme反射调用导致代码执行，但具体构造，先回顾一下CC1和CC2的思路。 CC1  新建一个map并绑定构造好的Chainedtransformer 获取map的键值对，然后调用setValue方法修改值或者put方法设置值就会调用到Chainedtransformer#transform，从而利">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1623131066345.png">
-<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1623131274832.png">
-<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1623132711385.png">
-<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1623132358483.png">
-<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1623133292054.png">
-<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1623133689996.png">
-<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1623135506228.png">
-<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1623136698492.png">
-<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1622617587623.png">
-<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1622617977844.png">
-<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1622618451670.png">
-<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1622619024513.png">
-<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1624243515457.png">
-<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1623138893915.png">
-<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1623137395765.png">
-<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1623140784763.png">
+<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1623131066345.png">
+<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1623131274832.png">
+<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1623132711385.png">
+<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1623132358483.png">
+<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1623133292054.png">
+<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1623133689996.png">
+<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1623135506228.png">
+<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1623136698492.png">
+<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1622617587623.png">
+<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1622617977844.png">
+<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1622618451670.png">
+<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1622619024513.png">
+<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1624243515457.png">
+<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1623138893915.png">
+<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1623137395765.png">
+<meta property="og:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1623140784763.png">
 <meta property="article:published_time" content="2021-06-21T12:55:16.619Z">
-<meta property="article:modified_time" content="2021-06-21T13:15:30.048Z">
+<meta property="article:modified_time" content="2021-06-22T09:34:32.233Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1623131066345.png">
+<meta name="twitter:image" content="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1623131066345.png">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -128,51 +128,51 @@
 
 
 <h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>产生漏洞的点在于<code>InstantiateTransformer#transform</code>方法，该方法实现的功能就是反射调用<code>input</code>（是一个Class的对象）描述的那个类的构造方法。只要参数<code>input</code>和<code>iParamTypes</code>、<code>iArgs</code>字段可控，那么就可以反射到目标类的构造方法。</p>
-<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1623131066345.png" alt="1623131066345"></p>
+<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1623131066345.png" alt="1623131066345"></p>
 <p>在InstantiateTransformer的构造方法中会<code>iParamTypes</code>和<code>iArgs</code>字段赋值。而且该类实现了Transformer接口</p>
-<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1623131274832.png" alt="1623131274832"></p>
-<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1623132711385.png" alt="1623132711385"></p>
+<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1623131274832.png" alt="1623131274832"></p>
+<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1623132711385.png" alt="1623132711385"></p>
 <p>此处利用链分析以<code>InstantiateTransformer#transform</code>方法为分界点，分为两部分:</p>
 <ul>
 <li>如何构造才能最终执行到<code>InstantiateTransformer#transform</code>方法，这一步称为控制反射利用链（方便描述，自己起的名字）</li>
 <li>怎么构造才能<code>InstantiateTransformer#transform</code>方法反射调用后执行到<code>Templatesimpl#getTransletInstance</code>方法中的<code>newinstance</code>，这一步称为命令执行利用链</li>
 </ul>
 <h3 id="控制反射利用链"><a href="#控制反射利用链" class="headerlink" title="控制反射利用链"></a>控制反射利用链</h3><p>还是熟悉的<code>ChainedTransformer</code>类，<code>iTransformers</code>字段是一个<code>Transformer</code>类型的数组，进行赋值，构造方法中会对该字段进行赋值。<code>ChainedTransformer#transform</code>中会调用<code>iTransformers</code>数组中的每一个元素的<code>transform</code>方法，并将前一次得到的结果作为下一次的输入参数。</p>
-<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1623132358483.png" alt="1623132358483"></p>
+<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1623132358483.png" alt="1623132358483"></p>
 <p>在<code>LazyMap#get</code>方法中当<code>factory</code>字段是<code>ChainedTransformer</code>的对象就可以调用到<code>ChainedTransformer#transform</code></p>
-<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1623133292054.png" alt="1623133292054"></p>
+<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1623133292054.png" alt="1623133292054"></p>
 <p><code>factory</code>也是<code>Transformer</code>类型。在<code>LazyMap#decorate</code>方法接收2个参数，一个是map类型的，另一个就是factory，并且会给<code>factory</code>字段赋值</p>
-<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1623133689996.png" alt="1623133689996"></p>
+<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1623133689996.png" alt="1623133689996"></p>
 <p>当调用lazyMap的get方法时就会调用到<code>ChainedTransformer#transform</code>，但是此处有个问题在<code>InstantiateTransformer#transform</code>方法中需要一个目标类的Class对象作为参数，有两种方式</p>
 <ul>
 <li>调用<code>lazyMap#get</code>方法时传入目标类对应的Class对象（这个不能利用反序列化链，后边会讲到）</li>
 <li>找到一个实现了<code>Transformer</code>接口的类，他的transform方法中可以的到一个目标类对应的Class对象</li>
 </ul>
 <p>ConstantTransformer类刚好满足条件：构造方法会对IConstant属性赋值，transform方法会将IConstant的值原封不动的返回</p>
-<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1623135506228.png" alt="1623135506228"></p>
+<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1623135506228.png" alt="1623135506228"></p>
 <p>所以poc中实现控制反射的构造代码如下，在<code>InstantiateTransformer#transform</code>方法中会调用到<code>TrAXFilter</code>类的构造方法</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">        //构造transformers</span><br><span class="line">        Transformer[] transformers = new Transformer[]&#123;</span><br><span class="line">            new ConstantTransformer(TrAXFilter.class),</span><br><span class="line">            new InstantiateTransformer(</span><br><span class="line">                new Class[]&#123;Templates.class&#125;,</span><br><span class="line">                new Object[]&#123;templatesImpl&#125;)</span><br><span class="line">        &#125;;</span><br><span class="line">		//构造ChainedTransformer</span><br><span class="line">        Transformer transformerChain = new ChainedTransformer(transformers);</span><br><span class="line">        Map innerMap = new HashMap();</span><br><span class="line">//        innerMap.entrySet();</span><br><span class="line">        //将innnerMap和ChainedTransformer（转换链）绑定，当调用lazymap.get()方法时会触发转换链的trasnformer方法，导致命令执行</span><br><span class="line">        Map outerMap = LazyMap.decorate(innerMap, transformerChain);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <h3 id="命令执行利用链"><a href="#命令执行利用链" class="headerlink" title="命令执行利用链"></a>命令执行利用链</h3><p><code>TrAXFilter</code>类的构造方法中会调用templates参数的<code>newTransformer</code>方法，只需要让templates参数是<code>TemplatesImpl</code>的实例即可</p>
-<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1623136698492.png" alt="1623136698492"></p>
+<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1623136698492.png" alt="1623136698492"></p>
 <p>接下来就和cc2的一样了</p>
 <p><code>newTransformer</code>方法中调用了<code>getTransletInstance()</code>方法</p>
-<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1622617587623.png" alt="1622617587623"></p>
+<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1622617587623.png" alt="1622617587623"></p>
 <p><code>getTransletInstance()</code>方法中<code>newinstance</code>方法创建实例后就执行了命令，所以<code>_class[_transletIndex]</code>一定是一个和<code>AbstractTranslet</code>类有继承关系的类的Class对象。</p>
-<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1622617977844.png" alt="1622617977844"></p>
+<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1622617977844.png" alt="1622617977844"></p>
 <p>我们看一下<code>_class</code>赋值的地方，当_name不为空且_class为空（所以poc设置了_name），才会调用<code>defineTransletClasses()</code>方法。</p>
-<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1622618451670.png" alt="1622618451670"></p>
+<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1622618451670.png" alt="1622618451670"></p>
 <p><code>defineTransletClasses()</code>方法中，会通过类加载器的<code>defineClass</code>方法将字节流还原成一个Class对象。</p>
-<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1622619024513.png" alt="1622619024513"></p>
+<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1622619024513.png" alt="1622619024513"></p>
 <p>然后调用还原的Class对象的newinstace方法创建实例时会执行静态代码块，所以导致了命令执行。</p>
-<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1624243515457.png" alt="1624243515457"></p>
+<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1624243515457.png" alt="1624243515457"></p>
 <h3 id="如何反序列化触发漏洞"><a href="#如何反序列化触发漏洞" class="headerlink" title="如何反序列化触发漏洞"></a>如何反序列化触发漏洞</h3><p>前边提到当调用LazyMap的get方法就会触发漏洞，如果找到一个类的readObject方法，且该方法中会LazyMap的get方法那么就可以,问题是怎么触发？</p>
 <p>在<code>AnnotationInvocationHandler#readObject</code>中会调用<code>this.memberValues.entrySet()</code>，</p>
-<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1623138893915.png" alt="1623138893915"></p>
+<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1623138893915.png" alt="1623138893915"></p>
 <p>构造方法中会给memberValues字段赋值</p>
-<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1623137395765.png" alt="1623137395765"></p>
+<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1623137395765.png" alt="1623137395765"></p>
 <p><code>AnnotationInvocationHandler#invoke</code>中如果this.memberValue是LazyMap对象，那么就会调用<code>lazymap.get</code>方法，从而触发漏洞。</p>
-<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/%5C1623140784763.png" alt="1623140784763"></p>
+<p><img src="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/1623140784763.png" alt="1623140784763"></p>
 <p>此处要用到java动态代理的知识，代码来自<a target="_blank" rel="noopener" href="https://www.liaoxuefeng.com/wiki/1252599548343744/1264804593397984">廖雪峰的java教程-动态代理</a></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//生成处理调用方法(也就是morning方法)的InvocationHandler，</span></span><br><span class="line">        InvocationHandler handler = <span class="keyword">new</span> InvocationHandler() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> Object <span class="title">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">                System.out.println(method);</span><br><span class="line">                <span class="keyword">if</span> (method.getName().equals(<span class="string">&quot;morning&quot;</span>)) &#123;</span><br><span class="line">                    System.out.println(<span class="string">&quot;Good morning, &quot;</span> + args[<span class="number">0</span>]);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        Hello hello = (Hello) Proxy.newProxyInstance(</span><br><span class="line">            Hello.class.getClassLoader(), <span class="comment">// 传入ClassLoader</span></span><br><span class="line">            <span class="keyword">new</span> Class[] &#123; Hello.class &#125;, <span class="comment">// 传入要实现的接口</span></span><br><span class="line">            handler); <span class="comment">// 传入处理调用方法(也就是morning方法)的InvocationHandler</span></span><br><span class="line">        </span><br><span class="line">        hello.morning(<span class="string">&quot;Bob&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//被代理接口</span></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Hello</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">morning</span><span class="params">(String name)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -198,7 +198,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/" data-id="ckq6nnult00003ovj2fmbbg0e" data-title="" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/" data-id="ckq7usuyj00007ovjb2hk7eea" data-title="" class="article-share-link">Share</a>
       
       
       
